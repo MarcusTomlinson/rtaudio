@@ -1,4 +1,4 @@
-﻿/************************************************************************/
+/************************************************************************/
 /*! \class RtAudio
     \brief Realtime audio i/o C++ classes.
 
@@ -3687,7 +3687,6 @@ static const char* getAsioErrorString( ASIOError result )
 #ifndef INITGUID
   #define INITGUID
 #endif
-#include <audioclient.h>
 #include <avrt.h>
 #include <mmdeviceapi.h>
 #include <functiondiscoverykeys_devpkey.h>
@@ -3697,11 +3696,14 @@ static const char* getAsioErrorString( ASIOError result )
 #include <mfplay.h>
 #include <wmcodecdsp.h>
 
+#include <audioclient.h>
 #ifdef _MSC_VER
   #pragma comment( lib, "mfplat.lib" )
   #pragma comment( lib, "mfuuid.lib" )
   #pragma comment( lib, "wmcodecdspuuid" )
 #endif
+
+
 
 //=============================================================================
 
@@ -5144,7 +5146,8 @@ void RtApiWasapi::wasapiThread()
                                    captureFlags & AUDCLNT_BUFFERFLAGS_DATA_DISCONTINUITY ? RTAUDIO_INPUT_OVERFLOW : 0,
                                    stream_.callbackInfo.userData );
 
-        // Handle return value from callback
+
+		// Handle return value from callback
         if ( callbackResult == 1 ) {
           // instantiate a thread to stop this thread
           HANDLE threadHandle = CreateThread( NULL, 0, stopWasapiThread, this, 0, NULL );
@@ -5202,7 +5205,7 @@ void RtApiWasapi::wasapiThread()
 
         // Convert callback buffer to stream sample rate
         renderResampler->Convert( convBuffer,
-                                  stream_.deviceBuffer,
+                                  stream_.userBuffer[OUTPUT],
                                   stream_.bufferSize,
                                   convBufferSize );
       }
